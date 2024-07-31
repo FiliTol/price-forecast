@@ -22,10 +22,13 @@ class JsonHandler:
         """
         location_geo = {}
         try:
-            for location in df['host_location'].unique().tolist():
+            for location in df["host_location"].unique().tolist():
                 host_location = self.geocode(location)
                 if host_location:
-                    location_geo[location] = (host_location.latitude, host_location.longitude)
+                    location_geo[location] = (
+                        host_location.latitude,
+                        host_location.longitude,
+                    )
                 else:
                     location_geo[location] = (None, None)
             return location_geo
@@ -42,7 +45,7 @@ class JsonHandler:
         :return: None
         """
         try:
-            with open(path, 'w') as f:
+            with open(path, "w") as f:
                 json.dump(dict_object, f)
         except Exception as e:
             print(f"An error occurred while exporting to JSON: {e}")
@@ -55,7 +58,7 @@ class JsonHandler:
         :return: JSON in dictionary form.
         """
         try:
-            with open(path, 'r') as f:
+            with open(path, "r") as f:
                 dict_object = json.load(f)
             return dict_object
         except Exception as e:

@@ -3,12 +3,10 @@ from geopy.distance import geodesic
 from sklearn.base import BaseEstimator, TransformerMixin
 import re
 
-pd.options.display.float_format = '{:.0f}'.format
+pd.options.display.float_format = "{:.0f}".format
 
 
 class GeographicTransformer(BaseEstimator, TransformerMixin):
-    # https://datascience.stackexchange.com/questions/117200/creating-new-features-as-linear-combination-of-others-as-part-of-a-scikit-learn
-    # https://www.andrewvillazon.com/custom-scikit-learn-transformers/
     def __init__(self, locations: dict, column: str = "host_location"):
         self.column = column
         self.locations = locations
@@ -18,7 +16,9 @@ class GeographicTransformer(BaseEstimator, TransformerMixin):
 
     def transform(self, X: pd.DataFrame, y=None):
         X = self.transform_to_coordinates(X)
-        X[self.column] = X.apply(lambda row: self.geodesic_distancer(row, from_loc="host_location"), axis=1)
+        X[self.column] = X.apply(
+            lambda row: self.geodesic_distancer(row, from_loc="host_location"), axis=1
+        )
         return X
 
     def transform_to_coordinates(self, X):
@@ -26,8 +26,7 @@ class GeographicTransformer(BaseEstimator, TransformerMixin):
         Given an entry and a dictionary, returns the latitude, longitude for
         the entry that are saved in the dictionary
         :param X: dataframe
-        :param locations: dict of locations:[latitude, longitude]
-        :return: [latitude, longitude]
+        :return: dataframe containing updated column
         """
         try:
             X[self.column] = X[self.column].apply(lambda x: self.locations.get(x))
@@ -55,7 +54,9 @@ class VectorToDataFrame(BaseEstimator, TransformerMixin):
         as a list of vectors where every vector is the list of words scores
         """
         dense_matrix = X.toarray()
-        combined_column = [dense_matrix[i].tolist() for i in range(dense_matrix.shape[0])]
+        combined_column = [
+            dense_matrix[i].tolist() for i in range(dense_matrix.shape[0])
+        ]
         return pd.Series(combined_column)
 
 
@@ -78,25 +79,25 @@ class BathroomsTransformer(BaseEstimator, TransformerMixin):
     @staticmethod
     def extract_digits(text):
         if pd.isna(text):
-            return '0'
+            return "0"
         if "half" in text.lower():
-            return '0.5'
-        digits = re.findall(r'\d+\.\d+|\d+', str(text))
-        return ''.join(digits) if digits else '0'
+            return "0.5"
+        digits = re.findall(r"\d+\.\d+|\d+", str(text))
+        return "".join(digits) if digits else "0"
 
     @staticmethod
     def remove_digits(text):
         if pd.isna(text):
-            return ''
-        return re.sub(r'\d', '', str(text)).strip()
+            return ""
+        return re.sub(r"\d", "", str(text)).strip()
 
     def create_baths_column(self, df: pd.DataFrame) -> pd.DataFrame:
-        df['bathrooms'] = df['bathrooms_text'].apply(self.extract_digits)
-        df['bathrooms'] = df['bathrooms'].astype(float)
+        df["bathrooms"] = df["bathrooms_text"].apply(self.extract_digits)
+        df["bathrooms"] = df["bathrooms"].astype(float)
         return df
 
     def clean_bathrooms_text(self, df: pd.DataFrame) -> pd.DataFrame:
-        df['bathrooms_text'] = df['bathrooms_text'].apply(self.remove_digits)
+        df["bathrooms_text"] = df["bathrooms_text"].apply(self.remove_digits)
         return df
 
     def fit(self, X, y=None):
@@ -122,19 +123,54 @@ class CreateStrategicLocationTransformer(BaseEstimator, TransformerMixin):
         return X
 
     def allocate_features(self, X):
-        X["airport_distance_km"] = pd.Series([self.locations["Aeroporto Marco Polo"]] * X.shape[0])
-        X["ferretto_square_distance_km"] = pd.Series([self.locations["Piazza Erminio Ferretto"]] * X.shape[0])
-        X["roma_square_distance_km"] = pd.Series([self.locations["Piazzale Roma"]] * X.shape[0])
-        X["rialto_bridge_distance_km"] = pd.Series([self.locations["Ponte di Rialto"]] * X.shape[0])
-        X["san_marco_square_distance_km"] = pd.Series([self.locations["Piazza San Marco"]] * X.shape[0])
+        X["airport_distance_km"] = pd.Series(
+            [self.locations["Aeroporto Marco Polo"]] * X.shape[0]
+        )
+        X["ferretto_square_distance_km"] = pd.Series(
+            [self.locations["Piazza Erminio Ferretto"]] * X.shape[0]
+        )
+        X["roma_square_distance_km"] = pd.Series(
+            [self.locations["Piazzale Roma"]] * X.shape[0]
+        )
+        X["rialto_bridge_distance_km"] = pd.Series(
+            [self.locations["Ponte di Rialto"]] * X.shape[0]
+        )
+        X["san_marco_square_distance_km"] = pd.Series(
+            [self.locations["Piazza San Marco"]] * X.shape[0]
+        )
         return X
-    
+
     def apply_distancer_to_strategic_locations(self, X: pd.DataFrame) -> pd.DataFrame:
-        X['airport_distance_km'] = X.apply(lambda row: self.geodesic_distancer(row=row, from_loc="airport_distance_km"), axis=1)
-        X['ferretto_square_distance_km'] = X.apply(lambda row: self.geodesic_distancer(row=row, from_loc="ferretto_square_distance_km"), axis=1)
-        X['roma_square_distance_km'] = X.apply(lambda row: self.geodesic_distancer(row=row, from_loc="roma_square_distance_km"), axis=1)
-        X['rialto_bridge_distance_km'] = X.apply(lambda row: self.geodesic_distancer(row=row, from_loc="rialto_bridge_distance_km"), axis=1)
-        X['san_marco_square_distance_km'] = X.apply(lambda row: self.geodesic_distancer(row=row, from_loc="san_marco_square_distance_km"), axis=1)
+        X["airport_distance_km"] = X.apply(
+            lambda row: self.geodesic_distancer(
+                row=row, from_loc="airport_distance_km"
+            ),
+            axis=1,
+        )
+        X["ferretto_square_distance_km"] = X.apply(
+            lambda row: self.geodesic_distancer(
+                row=row, from_loc="ferretto_square_distance_km"
+            ),
+            axis=1,
+        )
+        X["roma_square_distance_km"] = X.apply(
+            lambda row: self.geodesic_distancer(
+                row=row, from_loc="roma_square_distance_km"
+            ),
+            axis=1,
+        )
+        X["rialto_bridge_distance_km"] = X.apply(
+            lambda row: self.geodesic_distancer(
+                row=row, from_loc="rialto_bridge_distance_km"
+            ),
+            axis=1,
+        )
+        X["san_marco_square_distance_km"] = X.apply(
+            lambda row: self.geodesic_distancer(
+                row=row, from_loc="san_marco_square_distance_km"
+            ),
+            axis=1,
+        )
         return X
 
     @staticmethod
@@ -149,39 +185,26 @@ class CreateVerificationsTransformer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X, y=None):
-        # Perform arbitary transformation
-        #X["random_int"] = randint(0, 10, X.shape[0])
+        X = self.new_features_for_verifications(X)
+        X = self.apply_on_every_row(X)
+        return X.drop(["host_verifications"], axis=1)
+
+    @staticmethod
+    def new_features_for_verifications(X: pd.DataFrame) -> pd.DataFrame:
+        X["email_verification"] = "f"
+        X["phone_verification"] = "f"
+        X["work_email_verification"] = "f"
         return X
 
+    @staticmethod
+    def allocate_verifications_to_variables(row):
+        if "email" in row["host_verifications"]:
+            row["email_verification"] = "t"
+        if "phone" in row["host_verifications"]:
+            row["phone_verification"] = "t"
+        if "work_email" in row["host_verifications"]:
+            row["work_email_verification"] = "t"
+        return row
 
-class CreateBathsTransformer(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X, y=None):
-        # Perform arbitary transformation
-        #X["random_int"] = randint(0, 10, X.shape[0])
-        return X
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def apply_on_every_row(self, X: pd.DataFrame) -> pd.DataFrame:
+        return X.apply(self.allocate_verifications_to_variables, axis=1)

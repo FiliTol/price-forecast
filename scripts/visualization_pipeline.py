@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -139,10 +140,26 @@ feature_preprocessor = ColumnTransformer(
     ],
 )
 
-pd.to_pickle(
-    feature_preprocessor.fit_transform(df_listings),
-    "data/pickles/december_listings_viz.pkl",
-)
+cleaned_df = feature_preprocessor.fit_transform(df_listings)
+
+
+def remove_before_double_underscore(input_string):
+    result = re.sub(r'^.*?__', '', input_string)
+    return result
+
+
+def return_cleaned_col_names(list_of_names: list) -> list:
+    cleaned_names = []
+    for name in list_of_names:
+        cleaned_names.append(remove_before_double_underscore(name))
+    return cleaned_names
+
+
+cleaned_df.columns = return_cleaned_col_names(cleaned_df.columns)
+
+pd.to_pickle(cleaned_df,
+             "data/pickles/december_listings_viz.pkl",
+             )
 
 with open("data/visual/feature_preprocessor.html", "w") as f:
     f.write(estimator_html_repr(feature_preprocessor))

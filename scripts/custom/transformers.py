@@ -20,7 +20,7 @@ class GeographicTransformer(BaseEstimator, TransformerMixin):
     def transform(self, X: pd.DataFrame, y=None):
         if self.column == "host_location":
             X = self.transform_to_coordinates(X, self.locations)
-            X[self.column] = X.apply(lambda row: self.geodesic_distancer(row, from_loc="host_location"), axis=1)
+            X[self.column] = X.apply(lambda row: self.geodesic_distancer(row, from_loc="host_location"))
             return X
         else:
             X = self.create_strategic_locations_features(X)
@@ -147,3 +147,56 @@ class BathroomsTransformer(BaseEstimator, TransformerMixin):
         X = self.create_baths_column(X)
         X = self.clean_bathrooms_text(X)
         return X.replace(self.mapping)
+
+
+class CreateStrategicLocationTransformer(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        # Perform arbitary transformation
+        X["random_int"] = randint(0, 10, X.shape[0])
+        return X
+
+
+class CreateVerificationsTransformer(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        # Perform arbitary transformation
+        X["random_int"] = randint(0, 10, X.shape[0])
+        return X
+
+
+class CreateBathsTransformer(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        # Perform arbitary transformation
+        X["random_int"] = randint(0, 10, X.shape[0])
+        return X
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

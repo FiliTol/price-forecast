@@ -20,7 +20,7 @@ hide_default_format = """
 st.markdown(hide_default_format, unsafe_allow_html=True)
 st.title("Listings overview")
 
-df = pd.read_pickle("data/pickles/december_listings_viz.pkl")
+df = pd.read_pickle("data/pickles/listings_viz_dic.pkl")
 df.fillna("MISSING", inplace=True)
 df['host_response_rate'] = pd.to_numeric(df['host_response_rate'], errors='coerce')
 df['host_acceptance_rate'] = pd.to_numeric(df['host_acceptance_rate'], errors='coerce')

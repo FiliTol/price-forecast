@@ -10,8 +10,10 @@ from scripts.custom.function_transformers import fun_tr_transform_nan_unicode, f
     fun_tr_from_string_to_rate, fun_tr_transform_to_datetime, fun_tr_remove_dollar_sign
 from sklearn.utils import estimator_html_repr
 from sklearn import set_config
+import sys
 
 set_config(transform_output="pandas")
+
 
 pd.options.display.float_format = "{:.0f}".format
 handler = JsonHandler()
@@ -23,7 +25,9 @@ neighbourhood_levels = handler.import_from_json(
 )
 remap_baths = handler.import_from_json("data/mappings/baths.json")
 
-df_listings = pd.read_csv("data/2023dic/d_listings.csv")
+period = sys.argv[1]
+
+df_listings = pd.read_csv(f"data/data_{period}/d_listings.csv")
 df_listings.drop(
     labels=[
         "listing_url",
@@ -158,7 +162,7 @@ def return_cleaned_col_names(list_of_names: list) -> list:
 cleaned_df.columns = return_cleaned_col_names(cleaned_df.columns)
 
 pd.to_pickle(cleaned_df,
-             "data/pickles/december_listings_viz.pkl",
+             f"data/pickles/listings_viz_{period}.pkl",
              )
 
 with open("data/visual/feature_preprocessor.html", "w") as f:

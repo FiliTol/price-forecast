@@ -6,27 +6,27 @@ handler = JsonHandler()
 
 
 def load_listings_datasets():
-    datasets = {'2023dic': pd.read_csv("data/2023dic/d_listings.csv"),
-                '2023sep': pd.read_csv("data/2023sep/d_listings.csv"),
-                '2024jun': pd.read_csv("data/2024jun/d_listings.csv"),
-                '2024mar': pd.read_csv("data/2024mar/d_listings.csv")}
+    datasets = {'data_dic': pd.read_csv("data/data_dic/d_listings.csv"),
+                'data_sep': pd.read_csv("data/data_sep/d_listings.csv"),
+                'data_jun': pd.read_csv("data/data_jun/d_listings.csv"),
+                'data_mar': pd.read_csv("data/data_mar/d_listings.csv")}
     return datasets
 
 
 def retrieve_host_locations(dataframes):
-    host_locations = {'2023sep': handler.retrieve_host_location(dataframes['2023sep']),
-                      '2024jun': handler.retrieve_host_location(dataframes['2024jun']),
-                      '2024mar': handler.retrieve_host_location(dataframes['2024mar']),
-                      '2023dic': handler.retrieve_host_location(dataframes['2023dic'])}
+    host_locations = {'data_sep': handler.retrieve_host_location(dataframes['data_sep']),
+                      'data_jun': handler.retrieve_host_location(dataframes['data_jun']),
+                      'data_mar': handler.retrieve_host_location(dataframes['data_mar']),
+                      'data_dic': handler.retrieve_host_location(dataframes['data_dic'])}
     return host_locations
 
 
 dataframes = load_listings_datasets()
 host_locations = retrieve_host_locations(dataframes)
 host_locations_total = {
-    **host_locations.get('2023sep'),
-    **host_locations.get('2023dic'),
-    **host_locations.get('2024mar'),
-    **host_locations.get('2024jun'),
+    **host_locations.get('data_sep'),
+    **host_locations.get('data_dic'),
+    **host_locations.get('data_mar'),
+    **host_locations.get('data_jun'),
 }
 handler.export_to_json(host_locations_total, "data/mappings/host_locations.json")

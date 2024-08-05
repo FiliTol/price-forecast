@@ -4,9 +4,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scripts.custom.tools import JsonHandler
-from scripts.custom.class_transformers import GeographicTransformer, CreateStrategicLocationTransformer, \
+from scripts.custom.viz.class_transformers import GeographicTransformer, CreateStrategicLocationTransformer, \
     VectorToDataFrame, NeighborhoodMapper, BathroomsTransformer, CreateVerificationsTransformer
-from scripts.custom.function_transformers import fun_tr_transform_nan_unicode, fun_tr_id_to_string, \
+from scripts.custom.viz.function_transformers import fun_tr_transform_nan_unicode, fun_tr_id_to_string, \
     fun_tr_from_string_to_rate, fun_tr_transform_to_datetime, fun_tr_remove_dollar_sign
 from sklearn.utils import estimator_html_repr
 from sklearn import set_config

@@ -3,27 +3,27 @@
 ## Visualization
 
 ### Feature engineering
-- `first_review` to `last_review` as date span
-- `host_listings_count` as a % of `host_total_listings_count`
-- Manage `neighbourhoods_cleansed` as a OHE of most frequent categories
+- [X] `first_review` to `last_review` as `reviewed_time_span` in days
+- [X] `host_listings_count` as a % of `host_total_listings_count`
+- [X] Manage `neighbourhoods_cleansed` as a OHE of most frequent categories
 - Distance between host home and listing location
 - Distance between listing and relevant locations in town
 - `host_since` encoded as *days of activity until period end (end of dataset scraping)*
 - Sentiment of `neighborhood_overview` (investigate best sentiment technique for descriptions of appartments)
 - Sentiment of `host_about` (investigate best sentiment technique for description of people)
-- `host_id` and `id` as categorial
+- `host_id` as categorial (*with Count and Frequency Encoding from feature_engine package*) and **drop** `id` 
 - `host_response_time` as ordinal variable
 - string manipulation for `host_response_rate` and `host_acceptance_rate`
-- `host_is_superhost` as binary categorial
+- [X] `host_is_superhost` as binary categorial
 - `host_verifications` as encoded in previous script
-- `host_has_profile_pic` as binary
-- `host_identity_verified` as binary
+- [X] `host_has_profile_pic` as binary
+- [X] `host_identity_verified` as binary
 - keep `room_type` instead of `property_type` and make `room_type` a categorial with OHE
 - `accomodates` used with `baths`, `beds` to compute the rate of beds and bathrooms for every person
 - `price` with string manipulation
 - `minimum_nighs_avg_ntm` as float
 - `maximum_nights_avg_ntm` as float
-- `has_availability` as binary
+- [X] `has_availability` as binary
 - all the `has_availability_NUMBER` as a % of the NUMBER of the feature
 - `number_of_reviews` as an integer
 - `review_scores_rating` as float

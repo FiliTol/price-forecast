@@ -1,3 +1,3 @@
 from .custom.tools import *
-from .custom.function_transformers import *
-from .custom.class_transformers import *
+from scripts.custom.viz.function_transformers import *
+from scripts.custom.viz.class_transformers import *

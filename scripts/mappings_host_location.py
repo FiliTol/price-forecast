@@ -13,6 +13,7 @@ def load_listings_datasets():
     return datasets
 
 
+# Could be more efficient by accounting for the locations already retrieved before
 def retrieve_host_locations(dataframes):
     host_locations = {'data_sep': handler.retrieve_host_location(dataframes['data_sep']),
                       'data_jun': handler.retrieve_host_location(dataframes['data_jun']),

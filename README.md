@@ -6,31 +6,32 @@
 - [X] `first_review` to `last_review` as `reviewed_time_span` in days
 - [X] `host_listings_count` as a % of `host_total_listings_count`
 - [X] Manage `neighbourhoods_cleansed` as a OHE of most frequent categories
-- Distance between host home and listing location
-- Distance between listing and relevant locations in town
-- `host_since` encoded as *days of activity until period end (end of dataset scraping)*
+- [X] Distance between host home and listing location
+- [X] Distance between listing and relevant locations in town
+- [X] `host_since` encoded as *days of activity until period end (end of dataset scraping)*
 - Sentiment of `neighborhood_overview` (investigate best sentiment technique for descriptions of appartments)
 - Sentiment of `host_about` (investigate best sentiment technique for description of people)
-- `host_id` as categorial (*with Count and Frequency Encoding from feature_engine package*) and **drop** `id` 
-- `host_response_time` as ordinal variable
-- string manipulation for `host_response_rate` and `host_acceptance_rate`
+- [X] `host_id` as categorial (*with Count and Frequency Encoding from feature_engine package*) and **drop** `id` 
+- [X] `host_response_time` as ordinal variable
+- [X] string manipulation for `host_response_rate` and `host_acceptance_rate`
 - [X] `host_is_superhost` as binary categorial
-- `host_verifications` as encoded in previous script
+- [X] `host_verifications` as encoded in previous script
 - [X] `host_has_profile_pic` as binary
 - [X] `host_identity_verified` as binary
-- keep `room_type` instead of `property_type` and make `room_type` a categorial with OHE
-- `accomodates` used with `baths`, `beds` to compute the rate of beds and bathrooms for every person
-- `price` with string manipulation
-- `minimum_nighs_avg_ntm` as float
-- `maximum_nights_avg_ntm` as float
+- [X] keep `room_type` instead of `property_type` and make `room_type` an ordinal
+- [X] `bathrooms_text` as ordinal
+- [X] `accomodates` used with `baths`, `beds` to compute the rate of beds and bathrooms for every person
+- [X] `price` with string manipulation
+- [X] `minimum_nighs_avg_ntm` as float
+- [x] `maximum_nights_avg_ntm` as float
 - [X] `has_availability` as binary
-- all the `has_availability_NUMBER` as a % of the NUMBER of the feature
-- `number_of_reviews` as an integer
-- `review_scores_rating` as float
-- all the reviews scores as float
-- remove `calculated_host_listings_count` and keep the other three BUT **set them as % of the total host listings**
-- `reviews_per_month` as float
-- `longitude` and `latitude` standardization (because the values are both negatives and positives)
+- [X] `number_of_reviews` as an integer
+- [X] `review_scores_rating` as float
+- [X] all the reviews scores as float
+- [X] remove `calculated_host_listings_count` and keep the other three BUT **set them as % of the total host listings**
+- [X] `reviews_per_month` as float
+- [X] `longitude` and `latitude` standardization (because the values are both negatives and positives)
+- [X] `bedrooms` and `beds` turned into `beds_per_bedroom`
 
 ### Transform feature datatypes
 

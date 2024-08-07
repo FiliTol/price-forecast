@@ -1,57 +1,13 @@
-# Price prediction for Venice-based AirBnB listings
+# Price prediction for majori cities AirBnB listings
 
-## Visualization
+## Manipulation of multiple cities
 
-### Feature engineering
-- [X] `first_review` to `last_review` as `reviewed_time_span` in days
-- [X] `host_listings_count` as a % of `host_total_listings_count`
-- [X] Manage `neighbourhoods_cleansed` as a OHE of most frequent categories
-- [X] Distance between host home and listing location
-- [X] Distance between listing and relevant locations in town
-- [X] `host_since` encoded as *days of activity until period end (end of dataset scraping)*
-- Sentiment of `neighborhood_overview` (investigate best sentiment technique for descriptions of appartments)
-- Sentiment of `host_about` (investigate best sentiment technique for description of people)
-- [X] `host_id` as categorial (*with Count and Frequency Encoding from feature_engine package*) and **drop** `id` 
-- [X] `host_response_time` as ordinal variable
-- [X] string manipulation for `host_response_rate` and `host_acceptance_rate`
-- [X] `host_is_superhost` as binary categorial
-- [X] `host_verifications` as encoded in previous script
-- [X] `host_has_profile_pic` as binary
-- [X] `host_identity_verified` as binary
-- [X] keep `room_type` instead of `property_type` and make `room_type` an ordinal
-- [X] `bathrooms_text` as ordinal
-- [X] `accomodates` used with `baths`, `beds` to compute the rate of beds and bathrooms for every person
-- [X] `price` with string manipulation
-- [X] `minimum_nighs_avg_ntm` as float
-- [x] `maximum_nights_avg_ntm` as float
-- [X] `has_availability` as binary
-- [X] `number_of_reviews` as an integer
-- [X] `review_scores_rating` as float
-- [X] all the reviews scores as float
-- [X] remove `calculated_host_listings_count` and keep the other three BUT **set them as % of the total host listings**
-- [X] `reviews_per_month` as float
-- [X] `longitude` and `latitude` standardization (because the values are both negatives and positives)
-- [X] `bedrooms` and `beds` turned into `beds_per_bedroom`
-
-### Transform feature datatypes
-
-In this section we execute the feature engineering without dealing with null values.
-We do it because once the types are cleaned, we want to plot a bit the data and explore it to see what is going on
-with NAs, frequency distribution, numeric distributions etc.
-In order to do so, we need to:
-1. Generalise the pipeline, because we would like to apply this script also to other similar dataset
-2. Return exceptions for NAs, to carry them on to the data exploration section
-
-> ***NOTE*** that the `feature-engine` library enables us to split the dataset into train and test just after the data type and feature engineering. This because the library contains some functions for [preprocessing](https://feature-engine.trainindata.com/en/latest/user_guide/preprocessing/index.html) that can deal with removed rows and features afterwards
-
-- [Useful library for feature engineering](https://feature-engine.trainindata.com/en/latest/quickstart/index.html)
-
-## Split features into groups based on the data type
-
-- Split features for data types (***remember to insert the case where the columns with more than 50% NaN are not included in the splitting at all***)
-    - Then the pipeline is build to transform the data types
-    - Based on the previous splitting, apply Imputation methods to all the features. This is done because we don't know if other datasets will have the same null values ripartition
-    - At this point we need to **drop** the columns not included in the splitting of data types. This because the columns not included will be the ones with a lot of NAs from the start (more than 50%)
-
-> *Eventually we could compare the result of this approach with the result of a parallel approach whereby no columns are dropped and the NaNs are all Imputed. Then see how the two models perform*
-
+- [ ] Add features regarding some statistics about the city
+- [ ] During the ML pipeline, change the `latitude`, `longitude` into **polars coordinates** ([as suggested here](https://stackoverflow.com/questions/61572370/dealing-with-longitude-and-latitude-in-feature-engineering))
+- [ ] Keep the `property_type` of the listing and remap it into a smaller set of options (*already have it in draft notebook*)
+- [ ] Rework the `host_id` reasoning considering that hosts could have listings in multiple cities
+- [ ] Remove immediately text variables, also `host_about` and `neighborhood_overview`
+- [ ] **Remove the variables regarding the distance between the venetian monuments and the listing**
+- [ ] Analyse again the `bathrooms` and `bathrooms_text` variables at dispose to understand if there are a lot of bathrooms missing or not and eventually change the cleaning approach
+- [ ] Handle `amenities` by remapping them into smaller sets
+- [ ] 

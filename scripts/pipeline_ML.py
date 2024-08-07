@@ -9,9 +9,13 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, PolynomialFeatur
 from sklearn.impute import KNNImputer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.pipeline import Pipeline
+import sys
 
 
-df = pd.read_pickle("data/pickles/listings_viz_sep.pkl")
+period = sys.argv[1]
+
+
+df = pd.read_pickle(f"data/pickles/listings_viz_{period}.pkl")
 
 review_dates_feature = ["first_review", "last_review"]  # Variable possibly not needed
 
@@ -118,6 +122,7 @@ wizard_pipe = Pipeline(
                 reference=["host_total_listings_count"],
                 func=["div"],
                 drop_original=True,
+                fill_value=0
             ),
         ),
         # ========================
@@ -222,7 +227,7 @@ wizard_pipe = Pipeline(
                 variables=["bathrooms", "bedrooms", "beds"],
                 reference=["accommodates"],
                 func=["div"],
-                fill_value=None,
+                fill_value=0,
                 missing_values="ignore",
                 drop_original=False,
             ),
@@ -246,7 +251,7 @@ wizard_pipe = Pipeline(
                 variables=["bedrooms"],
                 reference=["beds"],
                 func=["div"],
-                fill_value=None,
+                fill_value=0,
                 missing_values="ignore",
                 drop_original=True,
             ),
@@ -269,7 +274,7 @@ wizard_pipe = Pipeline(
                 ],
                 reference=["calculated_host_listings_count"],
                 func=["div"],
-                fill_value=None,
+                fill_value=0,
                 missing_values="ignore",
                 drop_original=True,
             ),
@@ -332,4 +337,4 @@ wizard_pipe = Pipeline(
 )
 
 fitting_model = wizard_pipe.fit(X_train, y_train)
-wizard_pipe.score(X_test, y_test)
+print(f"Accuracy score for test set of {period} is {wizard_pipe.score(X_test, y_test)}")

@@ -25,7 +25,7 @@ import sys
 
 set_config(transform_output="pandas")
 
-
+period = sys.argv[1]
 pd.options.display.float_format = "{:.0f}".format
 handler = JsonHandler()
 
@@ -35,8 +35,6 @@ neighbourhood_levels = handler.import_from_json(
     "data/mappings/neighbourhoods_levels.json"
 )
 remap_baths = handler.import_from_json("data/mappings/baths.json")
-
-period = sys.argv[1]
 
 df_listings = pd.read_csv(f"data/data_{period}/d_listings.csv")
 df_listings.drop(

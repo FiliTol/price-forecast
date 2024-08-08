@@ -11,3 +11,7 @@
 - [ ] Analyse again the `bathrooms` and `bathrooms_text` variables at dispose to understand if there are a lot of bathrooms missing or not and eventually change the cleaning approach
 - [ ] Handle `amenities` by remapping them into smaller sets
 - [ ] 
+
+## Data exploration
+
+

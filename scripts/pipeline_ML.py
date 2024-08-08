@@ -9,6 +9,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler, PolynomialFeatur
 from sklearn.impute import KNNImputer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.pipeline import Pipeline
+from sklearn.neighbors import KNeighborsRegressor
 import sys
 
 
@@ -321,18 +322,27 @@ wizard_pipe = Pipeline(
         # ============
         # Prediction
         # ============
+        #(
+        #    "RandomForestRegressor",
+        #    RandomForestRegressor(
+        #        n_estimators=100,
+        #        criterion="squared_error",
+        #        bootstrap=True,
+        #        max_samples=0.7,
+        #        oob_score=True,
+        #        n_jobs=-1,
+        #        random_state=874631,
+        #    ),
+        #),
         (
-            "RandomForestRegressor",
-            RandomForestRegressor(
-                n_estimators=100,
-                criterion="squared_error",
-                bootstrap=True,
-                max_samples=0.7,
-                oob_score=True,
+            "KNeighborsRegressor",
+            KNeighborsRegressor(
+                n_neighbors=5,
+                weights="uniform",
+                algorithm="auto",
                 n_jobs=-1,
-                random_state=874631,
-            ),
-        ),
+            )
+        )
     ]
 )
 

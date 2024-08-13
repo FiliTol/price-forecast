@@ -2,6 +2,8 @@ from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
 import pandas as pd
 import json
+import os
+import re
 
 
 class JsonHandler:
@@ -64,3 +66,32 @@ class JsonHandler:
         except Exception as e:
             print(f"An error occurred while importing from JSON: {e}")
             return None
+
+
+def concatenate_listings_datasets() -> pd.DataFrame:
+    """
+    Given a folder path, return the dataframe that is the
+    concatenation of the csv in the folder path
+    :return: dataframe containing all city dataframes
+    """
+    datasets = {}
+
+    for file in os.listdir("data/all_cities"):
+        pattern = r'_(\w{2})'
+        match = re.search(pattern, file)
+        result = match.group(1)
+        datasets[f"df_{result}"] = pd.read_csv(f"data/all_cities/{file}")
+    df = pd.concat([value for key, value in datasets.items()], ignore_index=True)
+    return df
+
+
+def remove_before_double_underscore(input_string):
+    result = re.sub(r"^.*?__", "", input_string)
+    return result
+
+
+def return_cleaned_col_names(list_of_names: list) -> list:
+    cleaned_names = []
+    for name in list_of_names:
+        cleaned_names.append(remove_before_double_underscore(name))
+    return cleaned_names

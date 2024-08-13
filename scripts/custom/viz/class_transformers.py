@@ -1,8 +1,12 @@
+from pandarallel import pandarallel
 import pandas as pd
 from geopy.distance import geodesic
 from sklearn.base import BaseEstimator, TransformerMixin
 import re
+import reverse_geocode
+from typing import Tuple, List
 
+pandarallel.initialize(progress_bar=True)
 pd.options.display.float_format = "{:.0f}".format
 
 
@@ -208,3 +212,128 @@ class CreateVerificationsTransformer(BaseEstimator, TransformerMixin):
 
     def apply_on_every_row(self, X: pd.DataFrame) -> pd.DataFrame:
         return X.apply(self.allocate_verifications_to_variables, axis=1)
+
+
+class AmenitiesTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self, df: pd.DataFrame, remapper: List[Tuple[str, str]]):
+        self.amenities_lists: List[str] = df["amenities"].tolist()
+        self.remapper: List[Tuple[str, str]] = remapper
+        self.amenities_counter: dict = self.get_amenities_counter()
+        self.amenities_remapping: dict = self.get_amenities_remapper()
+
+    def get_amenities_counter(self) -> dict:
+        """
+        Function that unwraps the amenities column elements and
+        adds them to a dictionary to count frequencies.
+        :return: Dictionary with amenities counts.
+        """
+        amenities_counter: dict = {}
+
+        for el in self.amenities_lists:
+            for e in el.strip('][').split(', '):
+                amenity = e.strip('"')
+                amenities_counter[amenity] = amenities_counter.get(amenity, 0) + 1
+        return amenities_counter
+
+    def get_amenities_remapper(self) -> dict:
+        """
+        Takes a list of tuples in which every tuple contains (pattern, name)
+        and returns a dictionary with the remapped entries.
+        :return: Dictionary containing remapped amenities.
+        """
+        amenities_remapping = {}
+        for pattern, name in self.remapper:
+            if name=="other":
+                regex = re.compile(pattern, re.IGNORECASE)
+                for am in self.amenities_counter.keys():
+                    if not regex.search(am):
+                        amenities_remapping[am] = "other"
+            else:
+                regex = re.compile(pattern, re.IGNORECASE)
+                for am in self.amenities_counter.keys():
+                    if regex.search(am):
+                        amenities_remapping[am] = name
+        return amenities_remapping
+
+    def unwrap_remap_amenities(self, value):
+        element = [e.strip('"') for e in value.strip('][').split(', ')]
+        remapped_amenities = pd.Series(element).map(self.amenities_remapping)
+        return remapped_amenities.tolist()
+
+    @staticmethod
+    def return_amenity_counter(row):
+        amenities = ["AC/heating", "technology", "kitchen", "benefits", "toiletry", "other"]
+        counts = {amenity: row["amenities"].count(amenity) for amenity in amenities}
+        for amenity, count in counts.items():
+            row[f'amenities_{amenity}'] = count
+        return row
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        X["amenities"] = X["amenities"].parallel_apply(self.unwrap_remap_amenities)
+        X = X.parallel_apply(self.return_amenity_counter, axis=1)
+        return X
+
+
+class OfflineLocationFinder(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+
+    @staticmethod
+    def retrieve_city(row):
+        coords = (row["latitude"], row['longitude'])
+        row["listing_city"] = reverse_geocode.get(coords)["city"]
+        row["listing_city_pop"] = reverse_geocode.get(coords)["population"]
+        return row
+
+    def transform(self, X, y=None):
+        X = X.parallel_apply(self.retrieve_city, axis=1)
+        return X
+
+
+class PropertyTypeTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self, df: pd.DataFrame, remapper: List[Tuple[str, str]]):
+        self.property_type_list = df["property_type"].tolist()
+        self.remapper: List[Tuple[str, str]] = remapper
+        self.property_frequencies = {x:self.property_type_list.count(x) for x in self.property_type_list}
+        self.property_type_remapping = self.property_type_remapper()
+
+    def fit(self, X, y=None):
+        return self
+
+    def property_type_remapper(self):
+        property_type_remapping = {}
+        for pattern, name in self.remapper:
+            if name=="other":
+                regex = re.compile(pattern, re.IGNORECASE)
+                for am in self.property_frequencies.keys():
+                    if not regex.search(am):
+                        property_type_remapping[am] = "other"
+            else:
+                regex = re.compile(pattern, re.IGNORECASE)
+                for am in self.property_frequencies.keys():
+                    if regex.search(am):
+                        property_type_remapping[am] = name
+        return property_type_remapping
+
+    def transform(self, X, y=None):
+        X["property_type"] = X["property_type"].parallel_map(self.property_type_remapping)
+        return X
+
+
+class HostLocationImputer(TransformerMixin):
+    @staticmethod
+    def fill_host_location(row):
+        if pd.isna(row["host_location"]):
+            row["host_location"] = row["listing_city"] + ", Italy"
+        return row
+
+    def transform(self, df):
+        X = df.copy()
+        X = X.parallel_apply(self.fill_host_location, axis=1)
+        return X
+
+    def fit(self, *_):
+        return self

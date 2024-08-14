@@ -30,34 +30,34 @@ df['host_location'] = pd.to_numeric(df['host_location'], errors="coerce")
 graph = df.copy()
 
 zona_options = sorted(graph.loc[:, 'neighbourhood_cleansed'].unique().tolist())
-zona = st.sidebar.multiselect('Select neighbourhoods:', zona_options + ["All"], default="All")
+zona = st.multiselect('Select neighbourhoods:', zona_options + ["All"], default="All")
 if "All" in zona:
     zona = zona_options
 
 response_time_list = sorted(graph['host_response_time'].unique().tolist())
-response_time = st.sidebar.multiselect('Select response time:', response_time_list + ["All"], default="All")
+response_time = st.multiselect('Select response time:', response_time_list + ["All"], default="All")
 if "All" in response_time:
     response_time = response_time_list
 
-response_rate = st.sidebar.slider("Select host response rate", min_value=0, max_value=100, value=100)
+response_rate = st.slider("Select host response rate", min_value=0, max_value=100, value=100)
 if graph['host_response_rate'].isnull().sum()>0:
-    response_rate_MISSING_box = st.sidebar.toggle("Include NA in visualization for Host Response Rate", value=False)
+    response_rate_MISSING_box = st.toggle("Include NA in visualization for Host Response Rate", value=False)
 
-acceptance_rate = st.sidebar.slider("Select host acceptance rate", min_value=0, max_value=100, value=100)
+acceptance_rate = st.slider("Select host acceptance rate", min_value=0, max_value=100, value=100)
 if graph['host_acceptance_rate'].isnull().sum()>0:
-    acceptance_rate_MISSING_box = st.sidebar.toggle("Include NA in visualization for Host Acceptance Rate", value=False)
+    acceptance_rate_MISSING_box = st.toggle("Include NA in visualization for Host Acceptance Rate", value=False)
 
-price_range = st.sidebar.slider("Select price range",
+price_range = st.slider("Select price range",
                                 min_value=0.0,
                                 max_value=max(graph['price']),
                                 value=(0.0, max(graph['price'])),
                                 step=0.01)
 if graph['price'].isnull().sum()>0:
-    price_range_MISSING_box = st.sidebar.toggle("Include NA in visualization for Price", value=False)
+    price_range_MISSING_box = st.toggle("Include NA in visualization for Price", value=False)
 
-host_since = st.sidebar.date_input("Host since", min(graph['host_since']))
+host_since = st.date_input("Host since", min(graph['host_since']))
 
-host_distance = st.sidebar.slider("Distance between host house and listing location (0 km to 100+ km)",
+host_distance = st.slider("Distance between host house and listing location (0 km to 100+ km)",
                                   min_value=min(graph['host_location']),
                                   max_value=100.0,
                                   value=(0.0, 20.0),
@@ -65,10 +65,10 @@ host_distance = st.sidebar.slider("Distance between host house and listing locat
 if host_distance == 100.0:
     host_distance = max(graph['host_location'])
 if graph['host_location'].isnull().sum()>0:
-    host_distance_MISSING_box = st.sidebar.toggle("Include NA in visualization for host distance", value=False)
+    host_distance_MISSING_box = st.toggle("Include NA in visualization for host distance", value=False)
 
 superhost_list = sorted(graph['host_is_superhost'].unique().tolist())
-superhost = st.sidebar.multiselect('Is host a superhost?:', superhost_list + ["All"], default="All")
+superhost = st.multiselect('Is host a superhost?:', superhost_list + ["All"], default="All")
 if "All" in superhost:
     superhost = superhost_list
 

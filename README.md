@@ -10,3 +10,9 @@
 - [X] **Remove the variables regarding the distance between the venetian monuments and the listing**
 - [X] Analyse again the `bathrooms` and `bathrooms_text` variables at dispose to understand if there are a lot of bathrooms missing or not and eventually change the cleaning approach
 - [X] Handle `amenities` by remapping them into smaller sets
+
+## Normalization, transformation, grouping
+
+- [ ] Group highly skewed data like `host_response_rate` and `host_acceptance_rate` as `100` vs `lower`.
+- [ ] Transform other not-normally distributed variables in order to make them normally distributed. Use techniques like [`power_transform`](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.power_transform.html).
+- [ ] After transformations set the normalization parameter to true in order to scale them immediately with the sklearn `power_transform` transformer.

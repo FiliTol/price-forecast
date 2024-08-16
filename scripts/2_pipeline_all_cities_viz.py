@@ -20,7 +20,6 @@ from scripts.custom.viz.function_transformers import (
 )
 from sklearn.utils import estimator_html_repr
 from sklearn import set_config
-import sys
 
 set_config(transform_output="pandas")
 

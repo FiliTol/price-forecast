@@ -337,3 +337,50 @@ class HostLocationImputer(TransformerMixin):
 
     def fit(self, *_):
         return self
+
+
+class ColumnDropperTransformer():
+    def __init__(self, columns: list):
+        self.columns: list = columns
+
+    def transform(self, X, y=None):
+        return X.drop(self.columns, axis=1)
+
+    def fit(self, X, y=None):
+        return self
+
+
+class IntoBinaryTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self, feature: str, cat1: str, cond: str, cat2: str):
+        self.feature = feature
+        self.cat1 = cat1
+        self.cond = cond
+        self.cat2 = cat2
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        X[self.feature] = X[self.feature].apply(lambda x: self.cat1 if eval(self.cond) else self.cat2)
+        return X
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

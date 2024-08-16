@@ -4,6 +4,7 @@ import random
 import time
 from custom import custom_functions
 import plotly.express as px
+import plotly.graph_objects as go
 
 random.seed(874631)
 
@@ -56,7 +57,7 @@ if st.toggle("Take a peak to the cleaned dataset"):
         value=str(
             cleaned_df.shape[0] * cleaned_df.shape[1] - (sum(cleaned_df.count()))
         ),
-        help="*NAs cells in the dataframe*",
+        help="*NAs cells in the dataframe. These left NAs are imputed in the predictive model pipeline*",
         delta=delta_NAs,
         delta_color="inverse",
     )
@@ -84,11 +85,12 @@ else:
     col3.metric(
         label="NAs",
         value=raw_df.shape[0] * raw_df.shape[1] - (sum(raw_df.count())),
-        help="*NAs cells in the dataframe. These left NAs are imputed in the predictive model pipeline*",
+        help="*NAs cells in the dataframe.*",
         delta=-delta_NAs,
         delta_color="inverse",
     )
-    st.dataframe(raw_df.head())
+
+    st.dataframe(raw_df.head().style.apply(custom_functions.color_coding, axis=0))
 
     st.write("## Data types")
     st.markdown(
@@ -116,12 +118,14 @@ else:
     NAs_df = custom_functions.plot_nas_columns(df=raw_df).sort_values(
         "NAs", ascending=False
     )
+
     fig = px.bar(
         NAs_df,
         x=NAs_df.index,
         y="NAs",
         text_auto=True,
-        color_discrete_sequence=["black"] * len(NAs_df),
+        color="color",
+        color_discrete_map={"Remove": "red", "Keep": "black"}
     )
 
     st.plotly_chart(fig)
@@ -137,6 +141,8 @@ else:
     fig = px.histogram(
         NAs_df, x="NAs", text_auto=True, color_discrete_sequence=["black"] * len(NAs_df)
     )
+
+    fig.add_vline(x=7.5, line_color="red", line_width=2, line_dash="dash")
 
     st.plotly_chart(fig)
 

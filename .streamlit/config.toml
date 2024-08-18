@@ -191,7 +191,7 @@ gatherUsageStats = true
 serverPort = 8501
 
 [mapbox]
-# Configure Streamlit to use a custom Mapbox
+# Configure Streamlit to use a src Mapbox
 # token for elements like st.pydeck_chart and st.map.
 # To get a token for yourself, create an account at
 # https://mapbox.com. It's free (for moderate usage levels)!
@@ -199,7 +199,7 @@ serverPort = 8501
 token = ""
 
 [theme]
-# The preset Streamlit theme that your custom theme inherits from.
+# The preset Streamlit theme that your src theme inherits from.
 # One of "light" or "dark".
 base = "light"
 # Primary accent color for interactive elements.

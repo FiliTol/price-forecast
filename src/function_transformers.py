@@ -1,10 +1,6 @@
 import pandas as pd
-from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
-from sklearn.compose import ColumnTransformer
-from sklearn.feature_extraction.text import TfidfVectorizer
 import re
-from scripts.custom.tools import JsonHandler
 
 
 # Dropping features

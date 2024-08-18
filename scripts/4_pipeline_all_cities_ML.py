@@ -27,13 +27,10 @@ ohe_feature = [
     "review_scores_rating",
     "property_type",
     "room_type",
-    "bathrooms_text"
+    "bathrooms_text",
 ]
 
-ohe_most_frequent = [
-    "listing_city",
-    "neighbourhood_cleansed"
-]
+ohe_most_frequent = ["listing_city", "neighbourhood_cleansed"]
 
 host_id_feature = ["host_id"]
 
@@ -48,7 +45,7 @@ numerical_feature = [
     "amenities_technology",
     "amenities_kitchen",
     "amenities_benefits",
-    "accommodates"
+    "accommodates",
 ]
 
 coordinates_feature = ["latitude", "longitude"]
@@ -59,9 +56,7 @@ df["scraping_date"] = max(df["last_review"])
 # Drop rows with NaN in target
 df = df.loc[df["price"].notnull(), :]
 
-X = df.drop(
-    ["price"], axis=1, inplace=False
-)
+X = df.drop(["price"], axis=1, inplace=False)
 y = df["price"]
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -217,7 +212,7 @@ wizard_pipe = Pipeline(
                 random_state=874631,
             ),
         ),
-        #(
+        # (
         #    "KNeighborsRegressor",
         #    KNeighborsRegressor(
         #        n_neighbors=5,
@@ -225,10 +220,12 @@ wizard_pipe = Pipeline(
         #        algorithm="auto",
         #        n_jobs=-1,
         #    )
-        #)
+        # )
     ],
-    verbose=True
+    verbose=True,
 )
 
 fitting_model = wizard_pipe.fit(X_train, y_train)
-print(f"Coefficient of determination R^2 for test set is {wizard_pipe.score(X_test, y_test)}")
+print(
+    f"Coefficient of determination R^2 for test set is {wizard_pipe.score(X_test, y_test)}"
+)

@@ -41,7 +41,7 @@ class JsonHandler:
     @staticmethod
     def export_to_json(dict_object: dict, path: str) -> None:
         """
-        Given a dict with host locations, saves it to a custom path.
+        Given a dict with host locations, saves it to a src path.
         :param dict_object: dictionary to be saved as JSON.
         :param path: str with the path where to save JSON.
         :return: None
@@ -77,7 +77,7 @@ def concatenate_listings_datasets() -> pd.DataFrame:
     datasets = {}
 
     for file in os.listdir("data/all_cities"):
-        pattern = r'_(\w{2})'
+        pattern = r"_(\w{2})"
         match = re.search(pattern, file)
         result = match.group(1)
         datasets[f"df_{result}"] = pd.read_csv(f"data/all_cities/{file}")

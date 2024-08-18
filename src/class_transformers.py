@@ -230,7 +230,7 @@ class AmenitiesTransformer(BaseEstimator, TransformerMixin):
         amenities_counter: dict = {}
 
         for el in self.amenities_lists:
-            for e in el.strip('][').split(', '):
+            for e in el.strip("][").split(", "):
                 amenity = e.strip('"')
                 amenities_counter[amenity] = amenities_counter.get(amenity, 0) + 1
         return amenities_counter
@@ -243,7 +243,7 @@ class AmenitiesTransformer(BaseEstimator, TransformerMixin):
         """
         amenities_remapping = {}
         for pattern, name in self.remapper:
-            if name=="other":
+            if name == "other":
                 regex = re.compile(pattern, re.IGNORECASE)
                 for am in self.amenities_counter.keys():
                     if not regex.search(am):
@@ -256,16 +256,23 @@ class AmenitiesTransformer(BaseEstimator, TransformerMixin):
         return amenities_remapping
 
     def unwrap_remap_amenities(self, value):
-        element = [e.strip('"') for e in value.strip('][').split(', ')]
+        element = [e.strip('"') for e in value.strip("][").split(", ")]
         remapped_amenities = pd.Series(element).map(self.amenities_remapping)
         return remapped_amenities.tolist()
 
     @staticmethod
     def return_amenity_counter(row):
-        amenities = ["AC/heating", "technology", "kitchen", "benefits", "toiletry", "other"]
+        amenities = [
+            "AC/heating",
+            "technology",
+            "kitchen",
+            "benefits",
+            "toiletry",
+            "other",
+        ]
         counts = {amenity: row["amenities"].count(amenity) for amenity in amenities}
         for amenity, count in counts.items():
-            row[f'amenities_{amenity}'] = count
+            row[f"amenities_{amenity}"] = count
         return row
 
     def fit(self, X, y=None):
@@ -283,7 +290,7 @@ class OfflineLocationFinder(BaseEstimator, TransformerMixin):
 
     @staticmethod
     def retrieve_city(row):
-        coords = (row["latitude"], row['longitude'])
+        coords = (row["latitude"], row["longitude"])
         row["listing_city"] = reverse_geocode.get(coords)["city"]
         row["listing_city_pop"] = reverse_geocode.get(coords)["population"]
         return row
@@ -297,7 +304,9 @@ class PropertyTypeTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, df: pd.DataFrame, remapper: List[Tuple[str, str]]):
         self.property_type_list = df["property_type"].tolist()
         self.remapper: List[Tuple[str, str]] = remapper
-        self.property_frequencies = {x:self.property_type_list.count(x) for x in self.property_type_list}
+        self.property_frequencies = {
+            x: self.property_type_list.count(x) for x in self.property_type_list
+        }
         self.property_type_remapping = self.property_type_remapper()
 
     def fit(self, X, y=None):
@@ -306,7 +315,7 @@ class PropertyTypeTransformer(BaseEstimator, TransformerMixin):
     def property_type_remapper(self):
         property_type_remapping = {}
         for pattern, name in self.remapper:
-            if name=="other":
+            if name == "other":
                 regex = re.compile(pattern, re.IGNORECASE)
                 for am in self.property_frequencies.keys():
                     if not regex.search(am):
@@ -319,7 +328,9 @@ class PropertyTypeTransformer(BaseEstimator, TransformerMixin):
         return property_type_remapping
 
     def transform(self, X, y=None):
-        X["property_type"] = X["property_type"].parallel_map(self.property_type_remapping)
+        X["property_type"] = X["property_type"].parallel_map(
+            self.property_type_remapping
+        )
         return X
 
 
@@ -339,7 +350,7 @@ class HostLocationImputer(TransformerMixin):
         return self
 
 
-class ColumnDropperTransformer():
+class ColumnDropperTransformer:
     def __init__(self, columns: list):
         self.columns: list = columns
 
@@ -361,26 +372,7 @@ class IntoBinaryTransformer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X, y=None):
-        X[self.feature] = X[self.feature].apply(lambda x: self.cat1 if eval(self.cond) else self.cat2)
+        X[self.feature] = X[self.feature].apply(
+            lambda x: self.cat1 if eval(self.cond) else self.cat2
+        )
         return X
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

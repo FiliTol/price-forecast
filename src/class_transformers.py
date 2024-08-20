@@ -1,5 +1,6 @@
 from pandarallel import pandarallel
 import pandas as pd
+import numpy as np
 from geopy.distance import geodesic
 from sklearn.base import BaseEstimator, TransformerMixin
 import re
@@ -375,4 +376,16 @@ class IntoBinaryTransformer(BaseEstimator, TransformerMixin):
         X[self.feature] = X[self.feature].apply(
             lambda x: self.cat1 if eval(self.cond) else self.cat2
         )
+        return X
+
+
+class CoordinatesTransformer(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        X["x_coord"] = np.cos(X["latitude"]) * np.cos(X["longitude"])
+        X["y_coord"] = np.cos(X["latitude"]) * np.sin(X["longitude"])
+        X["z_coord"] = np.sin(X["latitude"])
+        X.drop(["longitude", "latitude"], inplace=True, axis=1)
         return X

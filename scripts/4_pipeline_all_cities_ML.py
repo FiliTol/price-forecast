@@ -1,30 +1,31 @@
 import pandas as pd
+import numpy as np
 from feature_engine.datetime import DatetimeSubtraction
 from feature_engine.creation import RelativeFeatures
 from feature_engine.encoding import OneHotEncoder, CountFrequencyEncoder, OrdinalEncoder
 from feature_engine.wrappers import SklearnTransformerWrapper
 from feature_engine.imputation import MeanMedianImputer, CategoricalImputer
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, PolynomialFeatures
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, PolynomialFeatures, PowerTransformer, RobustScaler
 from sklearn.impute import KNNImputer
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import explained_variance_score, mean_absolute_error, mean_squared_error, r2_score
 from sklearn.pipeline import Pipeline
+from sklearn.svm import SVR
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.neighbors import KNeighborsRegressor
 import sys
 
 
 df = pd.read_pickle("data/pickles/total_listings_exploration_handling.pkl")
 
+#df = df.loc[df["price"]<250, :]
+
 review_dates_feature = ["first_review", "last_review"]
 
 ohe_feature = [
     "host_is_superhost",
-    "host_response_rate",
     "host_response_time",
-    "minimum_nights",
-    "maximum_nights",
-    "listing_city_pop",
-    "review_scores_rating",
     "property_type",
     "room_type",
     "bathrooms_text",
@@ -46,9 +47,18 @@ numerical_feature = [
     "amenities_kitchen",
     "amenities_benefits",
     "accommodates",
+    "host_response_rate",
+    "minimum_nights",
+    "maximum_nights",
+    "listing_city_pop",
+    "review_scores_rating"
 ]
 
-coordinates_feature = ["latitude", "longitude"]
+coordinates_feature = [
+    "x_coord",
+    "y_coord",
+    "z_coord"
+]
 
 # Add feature needed for feature engineering of host_since
 df["scraping_date"] = max(df["last_review"])
@@ -118,7 +128,7 @@ wizard_pipe = Pipeline(
         (
             "OHETF_encoding",
             OneHotEncoder(
-                top_categories=5,
+                top_categories=7,
                 drop_last=True,
                 drop_last_binary=True,
                 ignore_format=False,
@@ -191,6 +201,21 @@ wizard_pipe = Pipeline(
                 + numerical_feature,
             ),
         ),
+        #(
+        #    "PowerTransformer",
+        #    SklearnTransformerWrapper(
+        #        transformer=PowerTransformer(
+        #            method="yeo-johnson",
+        #            standardize=True,
+        #            copy=False
+        #        ),
+        #        variables= [
+        #                       "days_active_reviews",
+        #                       "host_since_days",
+        #                   ]
+        #                   + numerical_feature
+        #    )
+        #),
         (
             "StandardScaler",
             SklearnTransformerWrapper(
@@ -201,31 +226,45 @@ wizard_pipe = Pipeline(
         # Prediction
         # ============
         (
-            "RandomForestRegressor",
-            RandomForestRegressor(
-                n_estimators=100,
-                criterion="squared_error",
-                bootstrap=True,
-                max_samples=0.7,
-                oob_score=True,
-                n_jobs=-1,
-                random_state=874631,
+            "SupportVectorRegression",
+            SVR(
+                kernel="rbf",
+                gamma="auto",
+                tol=1e-3,
+                epsilon=0.1,
+                verbose=True
             ),
         ),
-        # (
-        #    "KNeighborsRegressor",
-        #    KNeighborsRegressor(
-        #        n_neighbors=5,
-        #        weights="uniform",
-        #        algorithm="auto",
+        #(
+        #    "RandomForestRegressor",
+        #    RandomForestRegressor(
+        #        n_estimators=100,
+        #        criterion="squared_error",
+        #        bootstrap=True,
+        #        max_samples=0.7,
+        #        oob_score=True,
         #        n_jobs=-1,
-        #    )
-        # )
+        #        random_state=874631,
+        #    ),
+        #),
+        #(
+        #   "KNeighborsRegressor",
+        #   KNeighborsRegressor(
+        #       n_neighbors=5,
+        #       weights="uniform",
+        #       algorithm="auto",
+        #       n_jobs=-1,
+        #   )
+        #)
     ],
     verbose=True,
 )
 
 fitting_model = wizard_pipe.fit(X_train, y_train)
+pred = wizard_pipe.predict(X_test)
 print(
-    f"Coefficient of determination R^2 for test set is {wizard_pipe.score(X_test, y_test)}"
+    f"\nExplained variance score is {explained_variance_score(y_true=y_test, y_pred=pred)}",
+    f"\nMean Absolute Error is {mean_absolute_error(y_true=y_test, y_pred=pred)}",
+    f"\nMean Squared Error is {mean_squared_error(y_true=y_test, y_pred=pred)}",
+    f"\nR^2 Error is {r2_score(y_true=y_test, y_pred=pred)}",
 )

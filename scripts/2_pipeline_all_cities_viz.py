@@ -2,8 +2,8 @@ import pandas as pd
 from pandarallel import pandarallel
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from custom import JsonHandler, concatenate_listings_datasets, return_cleaned_col_names
-from custom.class_transformers import (
+from src.tools import JsonHandler, concatenate_listings_datasets, return_cleaned_col_names
+from src.class_transformers import (
     GeographicTransformer,
     BathroomsTransformer,
     CreateVerificationsTransformer,
@@ -12,7 +12,7 @@ from custom.class_transformers import (
     PropertyTypeTransformer,
     HostLocationImputer,
 )
-from custom import (
+from src.function_transformers import (
     fun_tr_id_to_string,
     fun_tr_from_string_to_rate,
     fun_tr_transform_to_datetime,

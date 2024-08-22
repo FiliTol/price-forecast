@@ -101,30 +101,34 @@ neighbourhood_feature = ["neighbourhood_cleansed"]
 price_feature = ["price"]
 
 # Amenities
-technology_pattern: str = (
-    r"\b(wifi|internet|ethernet|cable|fibra|dolby|smart|connection|tv|television|netflix|amazon|disney)\b"
-)
-kitchen_pattern: str = (
-    r"\b(kitchen|cooking|grill|cucina|refrigerator|fridge|oven|stove|dish|coffee|espresso|lavazza|dining|breakfast|microonde|microwave|washer|freezer|glasses|toast|baking)\b"
-)
-toiletry_pattern: str = (
-    r"\b(hair|capelli|soap|sapone|bidet|shampoo|bathtub|gel|laundry|closet|pillow|blanket|shower)\b"
-)
-acheating_pattern: str = r"\b(heating|ac|air|conditioning|fan)\b"
-benefits_pattern: str = (
-    r"\b(garden|backyard|skyline|beach|gym|fitness|view|outdoor|balcony|waterfront|bed linen|workspace|aid|luggage|elevator|free|safe|lock|security|bike|estinguisher)\b"
-)
-other_amenity_pattern: str = (
-    r"\b(wifi|internet|ethernet|cable|fibra|dolby|smart|connection|tv|television|netflix|amazon|disney|kitchen|cooking|grill|cucina|refrigerator|fridge|oven|stove|dish|coffee|espresso|lavazza|dining|breakfast|microonde|microwave|washer|freezer|glasses|toast|baking|hair|capelli|soap|sapone|bidet|shampoo|bathtub|gel|laundry|closet|pillow|blanket|shower|heating|ac|air|conditioning|fan|garden|backyard|skyline|beach|gym|fitness|view|outdoor|balcony|waterfront|bed linen|workspace|aid|luggage|elevator|free|safe|lock|security|bike|estinguisher)\b"
-)
+internet_pattern: str = r"\b(wifi|internet|ethernet|fibra|connection)\b"
+self_checkin_pattern: str = r"\b(self checkin|self check-in|self-checkin)\b"
+host_greeting_pattern: str = r"\b(host greeting|host greets you)\b"
+pool_pattern: str = r"\b(pool)\b"
+oven_pattern: str = r"\b(oven)\b"
+microwave_pattern: str = r"\b(microwave|microonde)\b"
+garden_pattern: str = r"\b(garden|park|backyard)\b"
+streaming_pattern: str = r"\b(netflix|amazon|disney)\b"
+gym_pattern: str = r"\b(exercise|gym|fitness)\b"
+elevator_pattern: str = r"\b(elevator)\b"
+heating_pattern: str = r"\b(heating)\b"
+ac_pattern: str = r"\b(ac|air conditioning|air-conditioning)\b"
+safe_pattern: str = r"\b(safe|locker|lock|security|guard)\b"
 
 set_amenities_remapper = [
-    (technology_pattern, "technology"),
-    (kitchen_pattern, "kitchen"),
-    (toiletry_pattern, "toiletry"),
-    (acheating_pattern, "AC/heating"),
-    (benefits_pattern, "benefits"),
-    (other_amenity_pattern, "other"),
+    (internet_pattern, "internet"),
+    (self_checkin_pattern, "self_checkin"),
+    (host_greeting_pattern, "host_greeting"),
+    (pool_pattern, "pool"),
+    (oven_pattern, "oven"),
+    (microwave_pattern, "microwave"),
+    (garden_pattern, "garden"),
+    (streaming_pattern, "streaming"),
+    (gym_pattern, "gym"),
+    (elevator_pattern, "elevator"),
+    (heating_pattern, "heating"),
+    (ac_pattern, "air_conditioning"),
+    (safe_pattern, "security")
 ]
 
 # Property type

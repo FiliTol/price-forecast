@@ -1,17 +1,7 @@
 # Price prediction for majori cities AirBnB listings
 
-## Manipulation of multiple cities
+## Normalization, transformation, grouping
 
-- [ ] Add features regarding some statistics about the city
-- [ ] During the ML pipeline, change the `latitude`, `longitude` into **polars coordinates** ([as suggested here](https://stackoverflow.com/questions/61572370/dealing-with-longitude-and-latitude-in-feature-engineering))
-- [ ] Keep the `property_type` of the listing and remap it into a smaller set of options (*already have it in draft notebook*)
-- [ ] Rework the `host_id` reasoning considering that hosts could have listings in multiple cities
-- [ ] Remove immediately text variables, also `host_about` and `neighborhood_overview`
-- [ ] **Remove the variables regarding the distance between the venetian monuments and the listing**
-- [ ] Analyse again the `bathrooms` and `bathrooms_text` variables at dispose to understand if there are a lot of bathrooms missing or not and eventually change the cleaning approach
-- [ ] Handle `amenities` by remapping them into smaller sets
-- [ ] 
-
-## Data exploration
-
-
+- [X] Transform other not-normally distributed variables in order to make them normally distributed. Use techniques like [`power_transform`](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.power_transform.html).
+- [X] After transformations set the normalization parameter to true in order to scale them immediately with the sklearn `power_transform` transformer.
+- [ ] Change `amenities` computation by considering a bucket of fewer amenities and by keeping them as categories. Then the categories can be listed in the multi selection menu

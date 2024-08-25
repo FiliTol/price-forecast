@@ -123,7 +123,7 @@ wizard_pipe = Pipeline(
                 reference=["host_total_listings_count"],
                 func=["div"],
                 drop_original=True,
-                fill_value=0
+                fill_value=0,
             ),
         ),
         # ========================
@@ -322,7 +322,7 @@ wizard_pipe = Pipeline(
         # ============
         # Prediction
         # ============
-        #(
+        # (
         #    "RandomForestRegressor",
         #    RandomForestRegressor(
         #        n_estimators=100,
@@ -333,7 +333,7 @@ wizard_pipe = Pipeline(
         #        n_jobs=-1,
         #        random_state=874631,
         #    ),
-        #),
+        # ),
         (
             "KNeighborsRegressor",
             KNeighborsRegressor(
@@ -341,8 +341,8 @@ wizard_pipe = Pipeline(
                 weights="uniform",
                 algorithm="auto",
                 n_jobs=-1,
-            )
-        )
+            ),
+        ),
     ]
 )
 

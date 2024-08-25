@@ -20,9 +20,8 @@ from sklearn.model_selection import GridSearchCV
 import sys
 from sklearn.neural_network import MLPRegressor
 
-
 param_grid = {
-    'regressor__hidden_layer_sizes': [(50,), (100,)], #, (100, 50), (150, 100, 50)],
+    'regressor__hidden_layer_sizes': [(50,), (100,)],  #, (100, 50), (150, 100, 50)],
     #'regressor__activation': ['relu', 'tanh', 'logistic'],
     'regressor__activation': ["logistic"],
     #'regressor__solver': ['sgd', 'adam'],
@@ -100,12 +99,12 @@ host_id_feature = ["host_id"]
 host_since_feature = ["host_since"]
 
 numerical_feature = [
-    "host_listings_count",
-    "host_location",
-    "number_of_reviews",
-    "reviews_per_month",
-    "accommodates",
-] + description_features
+                        "host_listings_count",
+                        "host_location",
+                        "number_of_reviews",
+                        "reviews_per_month",
+                        "accommodates",
+                    ] + description_features
 
 coordinates_feature = [
     "x_coord",
@@ -267,11 +266,11 @@ wizard_pipe = Pipeline(
                     standardize=True,
                     copy=False
                 ),
-                variables= [
-                               "days_active_reviews",
-                               "host_since_days",
-                           ]
-                           + numerical_feature
+                variables=[
+                              "days_active_reviews",
+                              "host_since_days",
+                          ]
+                          + numerical_feature
             )
         ),
         (
@@ -308,24 +307,24 @@ wizard_pipe = Pipeline(
         #        inverse_func=np.exp
         #    )
         #),
-        (
-            "TransformedTarget-RandomForestRegressor",
-            TransformedTargetRegressor(regressor=RandomForestRegressor(
-                n_estimators=100,
-                criterion="squared_error",
-                bootstrap=True,
-                max_samples=0.7,
-                oob_score=True,
-                n_jobs=-1,
-                random_state=874631,
-            ),
-                transformer=PowerTransformer(
-                    method="yeo-johnson",
-                    standardize=True,
-                    copy=False
-                ),
-            )
-        ),
+        #(
+        #    "TransformedTarget-RandomForestRegressor",
+        #    TransformedTargetRegressor(regressor=RandomForestRegressor(
+        #        n_estimators=100,
+        #        criterion="squared_error",
+        #        bootstrap=True,
+        #        max_samples=0.7,
+        #        oob_score=True,
+        #        n_jobs=-1,
+        #        random_state=874631,
+        #    ),
+        #        transformer=PowerTransformer(
+        #            method="yeo-johnson",
+        #            standardize=True,
+        #            copy=False
+        #        ),
+        #    )
+        #),
         #(
         #    "GridSearchCV",
         #    GridSearchCV(
@@ -343,34 +342,34 @@ wizard_pipe = Pipeline(
         #        return_train_score=True
         #    ),
         #),
-        #(
-        #    "TransformedTarget-MLPRegressor",
-        #    TransformedTargetRegressor(
-        #        regressor=MLPRegressor(hidden_layer_sizes=(100,),
-        #                               activation="relu",
-        #                               solver="sgd",
-        #                               alpha=0.0001,
-        #                               batch_size="auto",
-        #                               learning_rate="constant",
-        #                               learning_rate_init=0.001,
-        #                               max_iter=200,
-        #                               shuffle=True,
-        #                               random_state=874631,
-        #                               tol=1e-4,
-        #                               verbose=True,
-        #                               warm_start=False,
-        #                               momentum=0.9,
-        #                               early_stopping=True,
-        #                               validation_fraction=0.1,
-        #                               n_iter_no_change=20
-        #                               ),
-        #        transformer=PowerTransformer(
-        #        method="yeo-johnson",
-        #        standardize=True,
-        #        copy=False
-        #        ),
-        #    )
-        #),
+        (
+            "TransformedTarget-MLPRegressor",
+            TransformedTargetRegressor(
+                regressor=MLPRegressor(hidden_layer_sizes=(100,),
+                                       activation="relu",
+                                       solver="sgd",
+                                       alpha=0.0001,
+                                       batch_size="auto",
+                                       learning_rate="constant",
+                                       learning_rate_init=0.001,
+                                       max_iter=500,
+                                       shuffle=True,
+                                       random_state=874631,
+                                       tol=1e-4,
+                                       verbose=True,
+                                       warm_start=False,
+                                       momentum=0.9,
+                                       early_stopping=True,
+                                       validation_fraction=0.1,
+                                       n_iter_no_change=20
+                                       ),
+                transformer=PowerTransformer(
+                    method="yeo-johnson",
+                    standardize=True,
+                    copy=False
+                ),
+            )
+        ),
         #(
         #    "MLPRegressor",
         #    MLPRegressor(hidden_layer_sizes=(100,),
@@ -418,10 +417,10 @@ wizard_pipe = Pipeline(
 )
 
 fitting_model = wizard_pipe.fit(X_train, y_train)
-pred = wizard_pipe.predict(X_test)
+pred = wizard_pipe.predict(X_train)
 print(
-    f"\nExplained variance score is {explained_variance_score(y_true=y_test, y_pred=pred)}",
-    f"\nMean Absolute Error is {mean_absolute_error(y_true=y_test, y_pred=pred)}",
-    f"\nMean Squared Error is {mean_squared_error(y_true=y_test, y_pred=pred)}",
-    f"\nR^2 Error is {r2_score(y_true=y_test, y_pred=pred)}",
+    f"\nExplained variance score is {explained_variance_score(y_true=y_train, y_pred=pred)}",
+    f"\nMean Absolute Error is {mean_absolute_error(y_true=y_train, y_pred=pred)}",
+    f"\nMean Squared Error is {mean_squared_error(y_true=y_train, y_pred=pred)}",
+    f"\nR^2 Error is {r2_score(y_true=y_train, y_pred=pred)}",
 )

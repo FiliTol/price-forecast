@@ -263,23 +263,31 @@ class AmenitiesTransformer(BaseEstimator, TransformerMixin):
     @staticmethod
     def return_amenity_counter(row):
         amenities = [
-            "internet",
-            "self_checkin",
-            "host_greeting",
-            "pool",
-            "oven",
-            "microwave",
-            "garden",
-            "streaming",
-            "gym",
-            "elevator",
-            "heating",
-            "ac",
-            "security"
+            'internet',
+            'self-checkin',
+            'host-greeting',
+            'pool',
+            'oven',
+            'microwave',
+            'garden',
+            'streaming',
+            'gym',
+            'elevator',
+            'heating',
+            "air-conditioning",
+            "workspace",
+            "freezer",
+            "first-aid-kit",
+            "dishwasher",
+            "long-term-stays",
+            "pets-allowed",
+            "bathtube",
+            "bbq-grill",
+            "lake-bay-view"
         ]
         counts = {amenity: row["amenities"].count(amenity) for amenity in amenities}
         for amenity, count in counts.items():
-            row[f"amenities_{amenity}"] = 1 if count>0 else 0
+            row[f"amenities_{amenity}"] = "t" if count>0 else "f"
         return row
 
     def fit(self, X, y=None):
@@ -364,7 +372,7 @@ class ColumnDropperTransformer:
         return self
 
 class IntoBinaryTransformer(BaseEstimator, TransformerMixin):
-    def __init__(self, feature: str, cat1: str, cond: str, cat2: str):
+    def __init__(self, feature: str, cat1, cond: str, cat2):
         self.feature = feature
         self.cat1 = cat1
         self.cond = cond

@@ -21,9 +21,7 @@ to_drop_corr = [
     "review_scores_communication",
     "review_scores_location",
     "review_scores_value",
-    "amenities_other",
-    "amenities_toiletry",
-    "amenities",
+    "amenities"
 ]
 
 widely_unbalanced_features = [
@@ -41,47 +39,48 @@ eng_after_exploration_pipeline = Pipeline(
             "Drop unbalanced columns",
             ColumnDropperTransformer(columns=widely_unbalanced_features),
         ),
-        #(
-        #    "Transform Response Rate",
-        #    IntoBinaryTransformer(
-        #        feature="host_response_rate", cat1="100", cond="x==100", cat2="lower"
-        #    ),
-        #),
-        #(
-        #    "Transform Minimum Nights",
-        #    IntoBinaryTransformer(
-        #        feature="minimum_nights", cat1="1", cond="x<=1", cat2="more_than_1"
-        #    ),
-        #),
-        #(
-        #    "Transform Maximum Nights",
-        #    IntoBinaryTransformer(
-        #        feature="maximum_nights",
-        #        cat1="less_than_100",
-        #        cond="x<=100",
-        #        cat2="more_than_100",
-        #    ),
-        #),
-        #(
-        #    "Transform City Population",
-        #    IntoBinaryTransformer(
-        #        feature="listing_city_pop",
-        #        cat1="less_than_300k",
-        #        cond="x<=300000",
-        #        cat2="more_than_300k",
-        #    ),
-        #),
-        #(
-        #    "Transform Review Score Rating",
-        #    IntoBinaryTransformer(
-        #        feature="review_scores_rating",
-        #        cat1="less_than_4.8",
-        #        cond="x<4.8",
-        #        cat2="more_than_4.8",
-        #    ),
-        #),
         (
-            "Transform Host Respnse Time",
+            "Transform Response Rate",
+            IntoBinaryTransformer(
+                feature="host_response_rate", cat1="100", cond="x==100", cat2="lower"
+            ),
+        ),
+        (
+            "Transform Minimum Nights",
+            IntoBinaryTransformer(
+                feature="minimum_nights", cat1="1", cond="x<=1", cat2="more_than_1"
+            ),
+        ),
+        (
+            "Transform Maximum Nights",
+            IntoBinaryTransformer(
+                feature="maximum_nights",
+                cat1="less_than_100",
+                cond="x<=100",
+                cat2="more_than_100",
+            ),
+        ),
+        (
+            "Transform City Population",
+            IntoBinaryTransformer(
+                feature="listing_city_pop",
+                cat1="less_than_300k",
+                cond="x<=300000",
+                cat2="more_than_300k",
+            ),
+        ),
+        (
+            "Transform Review Score Rating",
+            IntoBinaryTransformer(
+                feature="review_scores_rating",
+                cat1="less_than_4.8",
+                cond="x<4.8",
+                cat2="more_than_4.8",
+            ),
+        ),
+
+        (
+            "Transform Host Response Time",
             IntoBinaryTransformer(
                 feature="host_response_time",
                 cat1="within_an_hour",
@@ -119,7 +118,7 @@ eng_after_exploration_pipeline = Pipeline(
         (
             "Coordinates to spatial",
             CoordinatesTransformer()
-        )
+        ),
     ],
     verbose=True,
 )

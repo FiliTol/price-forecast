@@ -1,5 +1,6 @@
 from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import RateLimiter
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 import pandas as pd
 import json
 import os
@@ -80,7 +81,10 @@ def concatenate_listings_datasets() -> pd.DataFrame:
         pattern = r"_(\w{2})"
         match = re.search(pattern, file)
         result = match.group(1)
-        datasets[f"df_{result}"] = pd.read_csv(f"data/all_cities/{file}")
+        data_frame_prep = pd.read_csv(f"data/all_cities/{file}")
+        data_frame_prep["df_city_location"] = file
+        data_frame_prep["df_city_location"] = data_frame_prep["df_city_location"].str.slice(start=9, stop=-4)
+        datasets[f"df_{result}"] = data_frame_prep
     df = pd.concat([value for key, value in datasets.items()], ignore_index=True)
     return df
 
@@ -95,3 +99,12 @@ def return_cleaned_col_names(list_of_names: list) -> list:
     for name in list_of_names:
         cleaned_names.append(remove_before_double_underscore(name))
     return cleaned_names
+
+
+def preprocess_text(text):
+    text = str(text).lower()
+    # punctuation/special char
+    text = re.sub(r'[^a-z\s]', '', text)
+    # English stop words
+    text = ' '.join([word for word in text.split() if word not in ENGLISH_STOP_WORDS])
+    return text

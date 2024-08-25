@@ -2,7 +2,7 @@ import pandas as pd
 from pandarallel import pandarallel
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from src.tools import JsonHandler, concatenate_listings_datasets, return_cleaned_col_names
+from src.tools import JsonHandler, concatenate_listings_datasets, return_cleaned_col_names, preprocess_text
 from src.class_transformers import (
     GeographicTransformer,
     BathroomsTransformer,
@@ -20,6 +20,8 @@ from src.function_transformers import (
 )
 from sklearn.utils import estimator_html_repr
 from sklearn import set_config
+from sklearn.feature_extraction.text import TfidfVectorizer
+from textblob import TextBlob
 
 set_config(transform_output="pandas")
 
@@ -48,7 +50,6 @@ df_listings.drop(
         "last_scraped",
         "source",
         "name",
-        "description",
         "picture_url",
         "host_url",
         "host_name",
@@ -104,21 +105,30 @@ price_feature = ["price"]
 internet_pattern: str = r"\b(wifi|internet|ethernet|fibra|connection)\b"
 self_checkin_pattern: str = r"\b(self checkin|self check-in|self-checkin)\b"
 host_greeting_pattern: str = r"\b(host greeting|host greets you)\b"
-pool_pattern: str = r"\b(pool)\b"
+pool_pattern: str = r"\b(pool|pool view|shared pool)\b"
 oven_pattern: str = r"\b(oven)\b"
 microwave_pattern: str = r"\b(microwave|microonde)\b"
 garden_pattern: str = r"\b(garden|park|backyard)\b"
-streaming_pattern: str = r"\b(netflix|amazon|disney)\b"
-gym_pattern: str = r"\b(exercise|gym|fitness)\b"
+streaming_pattern: str = r"\b(netflix|amazon|disney+|chromecast|apple tv|hbo|hbo max)\b"
+gym_pattern: str = r"\b(exercise|gym|fitness|private gym in building|shared gym|gym nearby|workout bench)\b"
 elevator_pattern: str = r"\b(elevator)\b"
 heating_pattern: str = r"\b(heating)\b"
-ac_pattern: str = r"\b(ac|air conditioning|air-conditioning)\b"
+ac_pattern: str = r"\b(central air conditioning|ac|air conditioning)\b"
 safe_pattern: str = r"\b(safe|locker|lock|security|guard)\b"
+workspace_pattern: str = r"\b(workspace|work)\b"
+freezer_pattern: str = r"\b(freezer|refrigerator)\b"
+aid_pattern: str = r"\b(first aid kit|aid)\b"
+dishwasher_pattern: str = r"\b(dishwasher)\b"
+long_term_stays_pattern: str = r"\b(long term stays)\b"
+pets_pattern: str = r"\b(pets allowed)\b"
+bathtube_pattern: str = r"\b(bathtube)\b"
+bbq_grill_pattern: str = r"\b(bbq grill|grill|barbeque|barbeque utensils)\b"
+lake_bay_pattern: str = r"\b(lake view|bay view|harbor view|beach view)\b"
 
 set_amenities_remapper = [
     (internet_pattern, "internet"),
-    (self_checkin_pattern, "self_checkin"),
-    (host_greeting_pattern, "host_greeting"),
+    (self_checkin_pattern, "self-checkin"),
+    (host_greeting_pattern, "host-greeting"),
     (pool_pattern, "pool"),
     (oven_pattern, "oven"),
     (microwave_pattern, "microwave"),
@@ -127,8 +137,16 @@ set_amenities_remapper = [
     (gym_pattern, "gym"),
     (elevator_pattern, "elevator"),
     (heating_pattern, "heating"),
-    (ac_pattern, "air_conditioning"),
-    (safe_pattern, "security")
+    (ac_pattern, "air-conditioning"),
+    (workspace_pattern, "workspace"),
+    (freezer_pattern, "freezer"),
+    (aid_pattern, "first-aid-kit"),
+    (dishwasher_pattern, "dishwasher"),
+    (long_term_stays_pattern, "long-term-stays"),
+    (pets_pattern, "pets-allowed"),
+    (bathtube_pattern, "bathtube"),
+    (bbq_grill_pattern, "bbq-grill"),
+    (lake_bay_pattern, "lake-bay-view")
 ]
 
 # Property type
@@ -205,6 +223,37 @@ cleaned_df = feature_preprocessor.fit_transform(df_listings)
 print("Preprocessing on features completed!")
 
 cleaned_df.columns = return_cleaned_col_names(cleaned_df.columns)
+print("Cleaned feature names retrieved")
+
+# Description preprocessing
+print("Preprocessing listings descriptions")
+cleaned_df["description"] = cleaned_df["description"].parallel_apply(preprocess_text)
+print("Preprocessing listings descriptions ended")
+
+print("Descriptions word count computation")
+cleaned_df['description_word_count'] = cleaned_df['description'].parallel_apply(lambda x: len(x.split()))
+print("Descriptions word count computation ended")
+
+print("Description sentitment and polarity computation")
+cleaned_df['description_sentiment_polarity'] = cleaned_df['description'].parallel_apply(lambda x: TextBlob(x).sentiment.polarity)
+cleaned_df['description_sentiment_subjectivity'] = cleaned_df['description'].parallel_apply(lambda x: TextBlob(x).sentiment.subjectivity)
+print("Description sentitment and polarity computation ended")
+
+n_features_vec = 50
+print(f"Startup Tfid vectorizer with {n_features_vec} features")
+tfidf = TfidfVectorizer(max_features=n_features_vec,
+                        max_df=0.9,
+                        min_df=0.1,
+                        use_idf=True,
+                        )
+print("Creating the Tfid vectorized dataset for description feature")
+tfidf_matrix = tfidf.fit_transform(cleaned_df['description'])
+print("Creating the Tfid vectorized dataset for description feature ended")
+
+print("Converting TF-IDF matrix to DataFrame, then concatenating with original DataFrame")
+tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), columns=tfidf.get_feature_names_out())
+cleaned_df = pd.concat([cleaned_df, tfidf_df], axis=1)
+print("Description preprocessing ended")
 
 pd.to_pickle(
     cleaned_df,

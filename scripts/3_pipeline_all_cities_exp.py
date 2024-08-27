@@ -34,7 +34,7 @@ widely_unbalanced_features = [
 
 eng_after_exploration_pipeline = Pipeline(
     steps=[
-        ("Drop NAs columns", ColumnDropperTransformer(columns=to_drop_corr)),
+        ("Drop columns", ColumnDropperTransformer(columns=to_drop_corr)),
         (
             "Drop unbalanced columns",
             ColumnDropperTransformer(columns=widely_unbalanced_features),

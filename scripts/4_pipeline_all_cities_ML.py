@@ -270,15 +270,15 @@ wizard_pipe = Pipeline(
                               "days_active_reviews",
                               "host_since_days",
                           ]
-                          + numerical_feature
+                          + numerical_feature + coordinates_feature
             )
         ),
-        (
-            "StandardScaler",
-            SklearnTransformerWrapper(
-                transformer=StandardScaler(), variables=coordinates_feature
-            ),
-        ),
+        #(
+        #    "StandardScaler",
+        #    SklearnTransformerWrapper(
+        #        transformer=StandardScaler(), variables=coordinates_feature
+        #    ),
+        #),
         # ============
         # Prediction
         # ============

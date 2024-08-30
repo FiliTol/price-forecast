@@ -225,35 +225,35 @@ print("Preprocessing on features completed!")
 cleaned_df.columns = return_cleaned_col_names(cleaned_df.columns)
 print("Cleaned feature names retrieved")
 
-# Description preprocessing
-print("Preprocessing listings descriptions")
-cleaned_df["description"] = cleaned_df["description"].parallel_apply(preprocess_text)
-print("Preprocessing listings descriptions ended")
-
-print("Descriptions word count computation")
-cleaned_df['description_word_count'] = cleaned_df['description'].parallel_apply(lambda x: len(x.split()))
-print("Descriptions word count computation ended")
-
-print("Description sentitment and polarity computation")
-cleaned_df['description_sentiment_polarity'] = cleaned_df['description'].parallel_apply(lambda x: TextBlob(x).sentiment.polarity)
-cleaned_df['description_sentiment_subjectivity'] = cleaned_df['description'].parallel_apply(lambda x: TextBlob(x).sentiment.subjectivity)
-print("Description sentitment and polarity computation ended")
-
-n_features_vec = 50
-print(f"Startup Tfid vectorizer with {n_features_vec} features")
-tfidf = TfidfVectorizer(max_features=n_features_vec,
-                        max_df=0.9,
-                        min_df=0.1,
-                        use_idf=True,
-                        )
-print("Creating the Tfid vectorized dataset for description feature")
-tfidf_matrix = tfidf.fit_transform(cleaned_df['description'])
-print("Creating the Tfid vectorized dataset for description feature ended")
-
-print("Converting TF-IDF matrix to DataFrame, then concatenating with original DataFrame")
-tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), columns=tfidf.get_feature_names_out())
-cleaned_df = pd.concat([cleaned_df, tfidf_df], axis=1)
-print("Description preprocessing ended")
+## Description preprocessing
+#print("Preprocessing listings descriptions")
+#cleaned_df["description"] = cleaned_df["description"].parallel_apply(preprocess_text)
+#print("Preprocessing listings descriptions ended")
+#
+#print("Descriptions word count computation")
+#cleaned_df['description_word_count'] = cleaned_df['description'].parallel_apply(lambda x: len(x.split()))
+#print("Descriptions word count computation ended")
+#
+#print("Description sentitment and polarity computation")
+#cleaned_df['description_sentiment_polarity'] = cleaned_df['description'].parallel_apply(lambda x: TextBlob(x).sentiment.polarity)
+#cleaned_df['description_sentiment_subjectivity'] = cleaned_df['description'].parallel_apply(lambda x: TextBlob(x).sentiment.subjectivity)
+#print("Description sentitment and polarity computation ended")
+#
+#n_features_vec = 50
+#print(f"Startup Tfid vectorizer with {n_features_vec} features")
+#tfidf = TfidfVectorizer(max_features=n_features_vec,
+#                        max_df=0.9,
+#                        min_df=0.1,
+#                        use_idf=True,
+#                        )
+#print("Creating the Tfid vectorized dataset for description feature")
+#tfidf_matrix = tfidf.fit_transform(cleaned_df['description'])
+#print("Creating the Tfid vectorized dataset for description feature ended")
+#
+#print("Converting TF-IDF matrix to DataFrame, then concatenating with original DataFrame")
+#tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), columns=tfidf.get_feature_names_out())
+#cleaned_df = pd.concat([cleaned_df, tfidf_df], axis=1)
+#print("Description preprocessing ended")
 
 pd.to_pickle(
     cleaned_df,

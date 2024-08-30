@@ -53,8 +53,6 @@ scoring = {
 
 df = pd.read_pickle("data/pickles/total_listings_exploration_handling.pkl")
 
-description_features = df.columns.tolist()[-54:-3]
-
 review_dates_feature = ["first_review", "last_review"]
 
 ohe_feature = [
@@ -104,7 +102,7 @@ numerical_feature = [
                         "number_of_reviews",
                         "reviews_per_month",
                         "accommodates",
-                    ] + description_features
+                    ] #+ description_features
 
 coordinates_feature = [
     "x_coord",
@@ -270,15 +268,15 @@ wizard_pipe = Pipeline(
                               "days_active_reviews",
                               "host_since_days",
                           ]
-                          + numerical_feature + coordinates_feature
+                          + numerical_feature
             )
         ),
-        #(
-        #    "StandardScaler",
-        #    SklearnTransformerWrapper(
-        #        transformer=StandardScaler(), variables=coordinates_feature
-        #    ),
-        #),
+        (
+            "StandardScaler",
+            SklearnTransformerWrapper(
+                transformer=StandardScaler(), variables=coordinates_feature
+            ),
+        ),
         # ============
         # Prediction
         # ============
@@ -307,24 +305,24 @@ wizard_pipe = Pipeline(
         #        inverse_func=np.exp
         #    )
         #),
-        #(
-        #    "TransformedTarget-RandomForestRegressor",
-        #    TransformedTargetRegressor(regressor=RandomForestRegressor(
-        #        n_estimators=100,
-        #        criterion="squared_error",
-        #        bootstrap=True,
-        #        max_samples=0.7,
-        #        oob_score=True,
-        #        n_jobs=-1,
-        #        random_state=874631,
-        #    ),
-        #        transformer=PowerTransformer(
-        #            method="yeo-johnson",
-        #            standardize=True,
-        #            copy=False
-        #        ),
-        #    )
-        #),
+        (
+            "TransformedTarget-RandomForestRegressor",
+            TransformedTargetRegressor(regressor=RandomForestRegressor(
+                n_estimators=100,
+                criterion="squared_error",
+                bootstrap=True,
+                max_samples=0.7,
+                oob_score=True,
+                n_jobs=-1,
+                random_state=874631,
+            ),
+                transformer=PowerTransformer(
+                    method="yeo-johnson",
+                    standardize=True,
+                    copy=False
+                ),
+            )
+        ),
         #(
         #    "GridSearchCV",
         #    GridSearchCV(
@@ -342,34 +340,34 @@ wizard_pipe = Pipeline(
         #        return_train_score=True
         #    ),
         #),
-        (
-            "TransformedTarget-MLPRegressor",
-            TransformedTargetRegressor(
-                regressor=MLPRegressor(hidden_layer_sizes=(100,),
-                                       activation="relu",
-                                       solver="sgd",
-                                       alpha=0.0001,
-                                       batch_size="auto",
-                                       learning_rate="constant",
-                                       learning_rate_init=0.001,
-                                       max_iter=500,
-                                       shuffle=True,
-                                       random_state=874631,
-                                       tol=1e-4,
-                                       verbose=True,
-                                       warm_start=False,
-                                       momentum=0.9,
-                                       early_stopping=True,
-                                       validation_fraction=0.1,
-                                       n_iter_no_change=20
-                                       ),
-                transformer=PowerTransformer(
-                    method="yeo-johnson",
-                    standardize=True,
-                    copy=False
-                ),
-            )
-        ),
+        #(
+        #    "TransformedTarget-MLPRegressor",
+        #    TransformedTargetRegressor(
+        #        regressor=MLPRegressor(hidden_layer_sizes=(100,),
+        #                               activation="relu",
+        #                               solver="sgd",
+        #                               alpha=0.0001,
+        #                               batch_size="auto",
+        #                               learning_rate="constant",
+        #                               learning_rate_init=0.001,
+        #                               max_iter=500,
+        #                               shuffle=True,
+        #                               random_state=874631,
+        #                               tol=1e-4,
+        #                               verbose=True,
+        #                               warm_start=False,
+        #                               momentum=0.9,
+        #                               early_stopping=True,
+        #                               validation_fraction=0.1,
+        #                               n_iter_no_change=20
+        #                               ),
+        #        transformer=PowerTransformer(
+        #            method="yeo-johnson",
+        #            standardize=True,
+        #            copy=False
+        #        ),
+        #    )
+        #),
         #(
         #    "MLPRegressor",
         #    MLPRegressor(hidden_layer_sizes=(100,),

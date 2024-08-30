@@ -214,6 +214,7 @@ class CreateVerificationsTransformer(BaseEstimator, TransformerMixin):
     def apply_on_every_row(self, X: pd.DataFrame) -> pd.DataFrame:
         return X.apply(self.allocate_verifications_to_variables, axis=1)
 
+
 class AmenitiesTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, df: pd.DataFrame, remapper: List[Tuple[str, str]]):
         self.amenities_lists: List[str] = df["amenities"].tolist()
@@ -287,7 +288,7 @@ class AmenitiesTransformer(BaseEstimator, TransformerMixin):
         ]
         counts = {amenity: row["amenities"].count(amenity) for amenity in amenities}
         for amenity, count in counts.items():
-            row[f"amenities_{amenity}"] = "t" if count>0 else "f"
+            row[f"amenities_{amenity}"] = "t" if count > 0 else "f"
         return row
 
     def fit(self, X, y=None):
@@ -297,6 +298,7 @@ class AmenitiesTransformer(BaseEstimator, TransformerMixin):
         X["amenities"] = X["amenities"].parallel_apply(self.unwrap_remap_amenities)
         X = X.parallel_apply(self.return_amenity_counter, axis=1)
         return X
+
 
 class OfflineLocationFinder(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
@@ -312,6 +314,7 @@ class OfflineLocationFinder(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         X = X.parallel_apply(self.retrieve_city, axis=1)
         return X
+
 
 class PropertyTypeTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, df: pd.DataFrame, remapper: List[Tuple[str, str]]):
@@ -346,6 +349,7 @@ class PropertyTypeTransformer(BaseEstimator, TransformerMixin):
         )
         return X
 
+
 class HostLocationImputer(TransformerMixin):
     @staticmethod
     def fill_host_location(row):
@@ -361,6 +365,7 @@ class HostLocationImputer(TransformerMixin):
     def fit(self, *_):
         return self
 
+
 class ColumnDropperTransformer:
     def __init__(self, columns: list):
         self.columns: list = columns
@@ -370,6 +375,7 @@ class ColumnDropperTransformer:
 
     def fit(self, X, y=None):
         return self
+
 
 class IntoBinaryTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, feature: str, cat1, cond: str, cat2):
@@ -387,6 +393,7 @@ class IntoBinaryTransformer(BaseEstimator, TransformerMixin):
         )
         return X
 
+
 class CoordinatesTransformer(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
@@ -397,3 +404,14 @@ class CoordinatesTransformer(BaseEstimator, TransformerMixin):
         X["z_coord"] = np.sin(X["latitude"])
         X.drop(["longitude", "latitude"], inplace=True, axis=1)
         return X
+
+
+class columnDropperTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self, columns):
+        self.columns = columns
+
+    def transform(self, X, y=None):
+        return X.drop(self.columns, axis=1)
+
+    def fit(self, X, y=None):
+        return self

@@ -53,8 +53,6 @@ scoring = {
 
 df = pd.read_pickle("data/pickles/total_listings_exploration_handling.pkl")
 
-#description_features = df.columns.tolist()[-54:-3]
-
 review_dates_feature = ["first_review", "last_review"]
 
 ohe_feature = [

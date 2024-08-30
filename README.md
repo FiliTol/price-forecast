@@ -9,6 +9,7 @@
   - City center (P.za San Marco)
   - Airport
   - Main train station
- - https://osmnx.readthedocs.io/en/stable/
- - https://lenkahas.com/post/pandana.html
+ - [Create path between geo objects](https://osmnx.readthedocs.io/en/stable/)
+ - [Compute effective travel distance](https://lenkahas.com/post/pandana.html)
+ - [Some city tourism statistics](https://ec.europa.eu/eurostat/statistics-explained/index.php?title=City_statistics_-_tourism)
  - 

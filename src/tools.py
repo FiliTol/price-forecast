@@ -69,6 +69,49 @@ class JsonHandler:
             return None
 
 
+def load_tourism_data():
+    """
+    Load tourism data from spreadsheet
+    :return: tourism dataframe with city acronyms as index
+    """
+    tourism_city_data = pd.read_excel("data/city_data/urb_ctour_page_spreadsheet.xlsx",
+                                      sheet_name="Data",
+                                      index_col=0,
+                                      )
+    col_names_tourism_data = [i.replace(" ", "_") for i in tourism_city_data.columns.tolist()]
+    rename_tourism_columns = {}
+    loop_index = 0
+    for el in tourism_city_data.columns.tolist():
+        rename_tourism_columns[el] = col_names_tourism_data[loop_index]
+        loop_index += 1
+    tourism_city_data.rename(columns=rename_tourism_columns, inplace=True)
+    rename_cities = {
+        "Venezia": "ve",
+        "Milano": "mi",
+        "Bergamo": "bg",
+        "Roma": "rm",
+        "Firenze": "fi",
+        "Bologna": "bo",
+        "Napoli": "na"
+    }
+    tourism_city_data.rename(index=rename_cities, inplace=True)
+
+    return tourism_city_data
+
+
+def add_tourism_data(df: pd.DataFrame):
+    """
+    Takes a dataframe and adds the touristic features for every city
+    :param df: dataframe of listings
+    :return: dataframe of listings with touristic features added
+    """
+    tourism_df = load_tourism_data()
+    df["Total_nights_spent_in_tourist_accommodation_establishments"] = tourism_df.loc[tourism_df.index==df["df_city_location"], "Total_nights_spent_in_tourist_accommodation_establishments"]
+    df["Nights_spent_in_tourist_accommodation_establishments_by_residents"] = tourism_df.loc[tourism_df.index==df["df_city_location"], "Nights_spent_in_tourist_accommodation_establishments_by_residents"]
+    df["Nights_spent_in_tourist_accommodation_establishments_by_non-residents"] = tourism_df.loc[tourism_df.index==df["df_city_location"], "Nights_spent_in_tourist_accommodation_establishments_by_non-residents"]
+    df["Total_nights_spent_in_tourist_accommodation_establishments_per_resident_population"] = tourism_df.loc[tourism_df.index==df["df_city_location"], "Total_nights_spent_in_tourist_accommodation_establishments_per_resident_population-residents"]
+
+
 def concatenate_listings_datasets() -> pd.DataFrame:
     """
     Given a folder path, return the dataframe that is the
@@ -108,3 +151,4 @@ def preprocess_text(text):
     # English stop words
     text = ' '.join([word for word in text.split() if word not in ENGLISH_STOP_WORDS])
     return text
+

@@ -415,3 +415,12 @@ class columnDropperTransformer(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
         return self
+
+
+class ScrapingDateTransformer(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        X["scraping_date"] = max(X["last_review"])
+        return X

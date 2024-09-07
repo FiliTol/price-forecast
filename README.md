@@ -12,4 +12,5 @@
  - [Create path between geo objects](https://osmnx.readthedocs.io/en/stable/)
  - [Compute effective travel distance](https://lenkahas.com/post/pandana.html)
  - [Some city tourism statistics](https://ec.europa.eu/eurostat/statistics-explained/index.php?title=City_statistics_-_tourism)
- - 
+
+> https://en.wikipedia.org/wiki/Leakage_(machine_learning)
